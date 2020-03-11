@@ -27,6 +27,10 @@ The implementation relies on Google's search page DOM being constant. If it chan
 
 In the event it changes, this package will be updated as soon as possible.
 
+## Credits
+
+Special Thanks to [Edmund Martin](https://edmundmartin.com/scraping-google-with-golang/)
+
 
 Other useful packages
 ------------
