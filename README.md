@@ -100,6 +100,10 @@ The implementation relies on Google's search page DOM being constant. If it chan
 
 In the event it changes, this package will be updated as soon as possible.
 
+Also note, that if you call this function too quickly, Google detects that it is being scraped and produces a [recaptcha](https://www.google.com/recaptcha/intro/v3.html) which interferes with the scraping. **Don't call it in quick succession.**
+
+
+
 ## Credits
 
 Special thanks to [Edmund Martin](https://edmundmartin.com/scraping-google-with-golang/).

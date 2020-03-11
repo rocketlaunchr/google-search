@@ -63,7 +63,7 @@ type SearchOptions struct {
 // Search returns a list of search results from Google.
 func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, error) {
 
-	c := colly.NewCollector(colly.MaxDepth(0))
+	c := colly.NewCollector(colly.MaxDepth(1))
 	if len(opts) == 0 {
 		opts = append(opts, SearchOptions{})
 	}
