@@ -17,7 +17,7 @@ import (
 
 func main() {
 	ctx := context.Background()
-	fmt.Println(googlesearch.Search(ctx, "optometrist"))
+	fmt.Println(googlesearch.Search(ctx, "cars for sale in Toronto, Canada"))
 }
 ```
 
