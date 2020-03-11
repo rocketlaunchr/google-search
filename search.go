@@ -102,6 +102,11 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		sel := e.DOM
 
 		for i := range sel.Nodes {
+			if err := ctx.Err(); err != nil {
+				rErr = err
+				return
+			}
+
 			item := sel.Eq(i)
 
 			rDiv := item.Find("div.r")
