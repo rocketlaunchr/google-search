@@ -57,7 +57,7 @@ type SearchOptions struct {
 	// Start sets from what rank the new result set should return.
 	Start int
 
-	// UserAgent sets the UserAgent of the request.
+	// UserAgent sets the UserAgent of the http request.
 	// Default: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
 	UserAgent string
 }

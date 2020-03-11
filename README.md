@@ -1,6 +1,6 @@
 # google-search [![GoDoc](http://godoc.org/github.com/rocketlaunchr/google-search?status.svg)](http://godoc.org/github.com/rocketlaunchr/google-search) [![Go Report Card](https://goreportcard.com/badge/github.com/rocketlaunchr/google-search)](https://goreportcard.com/report/github.com/rocketlaunchr/google-search)
 
-Quickly scrape Google Seach Results.
+Quickly scrape Google Search Results.
 
 ⭐ **the project to show your appreciation.**
 
