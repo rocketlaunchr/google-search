@@ -40,7 +40,7 @@ var GoogleDomains = map[string]string{
 	"nz": "https://www.google.co.nz/search?q=",
 }
 
-// SearchOptions modifies how Search function behaves.
+// SearchOptions modifies how the Search function behaves.
 type SearchOptions struct {
 
 	// CountryCode sets the ISO 3166-1 alpha-2 code of the localized Google Search homepage to use.

@@ -1,4 +1,4 @@
-# google-search [![GoDoc](http://godoc.org/github.com/rocketlaunchr/google-search?status.svg)](http://godoc.org/github.com/rocketlaunchr/google-search)[![Go Report Card](https://goreportcard.com/badge/github.com/rocketlaunchr/google-search)](https://goreportcard.com/report/github.com/rocketlaunchr/google-search)
+# google-search [![GoDoc](http://godoc.org/github.com/rocketlaunchr/google-search?status.svg)](http://godoc.org/github.com/rocketlaunchr/google-search) [![Go Report Card](https://goreportcard.com/badge/github.com/rocketlaunchr/google-search)](https://goreportcard.com/report/github.com/rocketlaunchr/google-search)
 
 Quickly scrape Google Seach Results.
 
@@ -20,6 +20,12 @@ func main() {
 	fmt.Println(googlesearch.Search(ctx, "optometrist"))
 }
 ```
+
+## Warning
+
+The implementation relies on Google's search page DOM being constant. If it changes, then the implementation will break. Having said that, it hasn't changed for years.
+
+In the event it changes, this package will be updated as soon as possible.
 
 
 Other useful packages
