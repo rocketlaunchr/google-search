@@ -29,7 +29,7 @@ In the event it changes, this package will be updated as soon as possible.
 
 ## Credits
 
-Special Thanks to [Edmund Martin](https://edmundmartin.com/scraping-google-with-golang/)
+Special thanks to [Edmund Martin](https://edmundmartin.com/scraping-google-with-golang/).
 
 
 Other useful packages
