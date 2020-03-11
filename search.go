@@ -14,16 +14,16 @@ import (
 type GoogleResult struct {
 
 	// Rank is the order number of the search result.
-	Rank int
+	Rank int `json:"rank"`
 
 	// URL of result.
-	URL string
+	URL string `json:"url"`
 
 	// Title of result.
-	Title string
+	Title string `json:"title"`
 
 	// Description of the result.
-	Description string
+	Description string `json:"description"`
 }
 
 // GoogleDomains represents localized Google homepages. The 2 letter country code is based on ISO 3166-1 alpha-2.
