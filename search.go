@@ -4,14 +4,12 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gocolly/colly/v2"
 )
 
-// GoogleResult represents a single result from Google Search.
-type GoogleResult struct {
+// Result represents a single result from Google Search.
+type Result struct {
 
 	// Rank is the order number of the search result.
 	Rank int `json:"rank"`
@@ -63,7 +61,7 @@ type SearchOptions struct {
 }
 
 // Search returns a list of search results from Google.
-func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]GoogleResult, error) {
+func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, error) {
 
 	c := colly.NewCollector(colly.MaxDepth(0))
 	if len(opts) == 0 {
@@ -83,7 +81,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Go
 		lc = opts[0].LanguageCode
 	}
 
-	results := []GoogleResult{}
+	results := []Result{}
 	var rErr error
 	rank := 1
 
@@ -117,7 +115,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Go
 			descText := strings.TrimSpace(sDiv.Find("span.st").Text())
 
 			if linkText != "" && linkText != "#" {
-				result := GoogleResult{
+				result := Result{
 					Rank:        rank,
 					URL:         linkText,
 					Title:       titleText,
