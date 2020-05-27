@@ -36,6 +36,7 @@ var GoogleDomains = map[string]string{
 	"fr": "https://www.google.fr/search?q=",
 	"au": "https://www.google.com.au/search?q=",
 	"nz": "https://www.google.co.nz/search?q=",
+	"de": "https://www.google.de/search?q=",
 }
 
 // SearchOptions modifies how the Search function behaves.
