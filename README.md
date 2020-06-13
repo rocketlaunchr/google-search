@@ -1,8 +1,11 @@
+<p align="right">
+  <a href="http://godoc.org/github.com/rocketlaunchr/google-search"><img src="http://godoc.org/github.com/rocketlaunchr/google-search?status.svg" /></a>
+  <a href="https://goreportcard.com/report/github.com/rocketlaunchr/google-search"><img src="https://goreportcard.com/badge/github.com/rocketlaunchr/google-search" /></a>
+</p>
+
 <p align="center">
 <img src="https://github.com/rocketlaunchr/google-search/raw/master/screenshot.png" alt="google home page" />
 </p>
-
-# google-search [![GoDoc](http://godoc.org/github.com/rocketlaunchr/google-search?status.svg)](http://godoc.org/github.com/rocketlaunchr/google-search) [![Go Report Card](https://goreportcard.com/badge/github.com/rocketlaunchr/google-search)](https://goreportcard.com/report/github.com/rocketlaunchr/google-search)
 
 Quickly scrape Google Search Results.
 
