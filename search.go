@@ -299,15 +299,13 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 			item := sel.Eq(i)
 
-			rDiv := item.Find("div.r")
+			rDiv := item.Find("div.rc")
 
 			linkHref, _ := rDiv.Find("a").Attr("href")
 			linkText := strings.TrimSpace(linkHref)
 			titleText := strings.TrimSpace(rDiv.Find("h3").Text())
 
-			sDiv := item.Find("div.s")
-
-			descText := strings.TrimSpace(sDiv.Find("span.st").Text())
+			descText := strings.TrimSpace(rDiv.Find("div > div > span > span").Text())
 
 			if linkText != "" && linkText != "#" {
 				result := Result{
