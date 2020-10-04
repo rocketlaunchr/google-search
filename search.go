@@ -248,6 +248,10 @@ type SearchOptions struct {
 	// UserAgent sets the UserAgent of the http request.
 	// Default: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
 	UserAgent string
+
+	// OverLimit searches for more results than that specified by Limit.
+	// It then reduces the returned results to match Limit.
+	OverLimit bool
 }
 
 // Search returns a list of search results from Google.
@@ -320,7 +324,12 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		}
 	})
 
-	url := url(searchTerm, opts[0].CountryCode, lc, opts[0].Limit, opts[0].Start)
+	limit := opts[0].Limit
+	if opts[0].OverLimit {
+		limit = int(float64(opts[0].Limit) * 1.5)
+	}
+
+	url := url(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 	c.Visit(url)
 
 	if rErr != nil {
@@ -357,7 +366,7 @@ func url(searchTerm string, countryCode string, languageCode string, limit int, 
 	}
 
 	if limit != 0 {
-		url = fmt.Sprintf("%s&num=%d", url, int(float64(limit)*1.5)) // Factor in ads etc
+		url = fmt.Sprintf("%s&num=%d", url, limit)
 	}
 
 	return url
