@@ -55,7 +55,7 @@ func main() {
 
 ## Warning
 
-The implementation relies on Google's search page DOM being constant. If it changes, then the implementation will break. Having said that, it hasn't changed for years.
+The implementation relies on Google's search page DOM being constant. From time to time, Google changes their DOM and thus breaks the implementation.
 
 In the event it changes, this package will be updated as soon as possible.
 

@@ -326,6 +326,12 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	if rErr != nil {
 		return nil, rErr
 	}
+
+	// Reduce results to max limit
+	if opts[0].Limit != 0 && len(results) > opts[0].Limit {
+		return results[:opts[0].Limit], nil
+	}
+
 	return results, nil
 }
 
@@ -351,7 +357,7 @@ func url(searchTerm string, countryCode string, languageCode string, limit int, 
 	}
 
 	if limit != 0 {
-		url = fmt.Sprintf("%s&num=%d", url, limit)
+		url = fmt.Sprintf("%s&num=%d", url, int(float64(limit)*1.5)) // Factor in ads etc
 	}
 
 	return url
