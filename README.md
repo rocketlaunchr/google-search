@@ -59,7 +59,7 @@ In the event it changes, this package will be updated as soon as possible.
 
 Also note, that if you call this function too quickly, Google detects that it is being scraped and produces a [recaptcha](https://www.google.com/recaptcha/intro/v3.html) which interferes with the scraping. **Don't call it in quick succession.** It may take some time before Google unblocks you.
 
-You can try the built-in [rate-limiter](https://godoc.org/github.com/rocketlaunchr/google-search#RateLimit).
+**Always** use the built-in [rate-limiter](https://godoc.org/github.com/rocketlaunchr/google-search#RateLimit) set to reasonable settings.
 
 <details>
   <summary>&nbsp;&nbsp;<strong>HTTP STATUS CODE: 429 &mdash; Too Many Requests</strong></summary>
