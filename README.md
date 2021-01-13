@@ -72,6 +72,7 @@ You can try the built-in [rate-limiter](https://godoc.org/github.com/rocketlaunc
 
 
   <div style="font-size:13px;">
+  [HTTP STATUS CODE: 429 &mdash; Too Many Requests]
   <b>About this page</b><br><br>
 
   Our systems have detected unusual traffic from your computer network.  This page checks to see if it&#39;s really you sending the requests, and not a robot.  <a href="#" onclick="document.getElementById('infoDiv').style.display='block';">Why did this happen?</a><br><br>
