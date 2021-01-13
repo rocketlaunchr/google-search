@@ -62,7 +62,7 @@ Also note, that if you call this function too quickly, Google detects that it is
 You can try the built-in [rate-limiter](https://godoc.org/github.com/rocketlaunchr/google-search#RateLimit).
 
 <details>
-  <summary>HTTP STATUS CODE: 429 &mdash; Too Many Requests</summary>
+  <summary>&nbsp;&nbsp;<strong>HTTP STATUS CODE: 429 &mdash; Too Many Requests</strong></summary>
   
 <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
 <foreignObject width="100" height="100">
