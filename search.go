@@ -340,6 +340,9 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	c.Visit(url)
 
 	if rErr != nil {
+		if strings.Contains(rErr.Error(), "Too Many Requests") {
+			return nil, ErrBlocked
+		}
 		return nil, rErr
 	}
 
