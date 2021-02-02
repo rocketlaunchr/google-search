@@ -298,36 +298,26 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		rErr = err
 	})
 
+	// https://www.w3schools.com/cssref/css_selectors.asp
 	c.OnHTML("div.g", func(e *colly.HTMLElement) {
 
 		sel := e.DOM
 
-		for i := range sel.Nodes {
-			if err := ctx.Err(); err != nil {
-				rErr = err
-				return
+		linkHref, _ := sel.Find("a").Attr("href")
+		linkText := strings.TrimSpace(linkHref)
+		titleText := strings.TrimSpace(sel.Find("div > div > a > h3 > span").Text())
+
+		descText := strings.TrimSpace(sel.Find("div > div > div > span > span").Text())
+
+		if linkText != "" && linkText != "#" {
+			result := Result{
+				Rank:        rank,
+				URL:         linkText,
+				Title:       titleText,
+				Description: descText,
 			}
-
-			item := sel.Eq(i)
-
-			rDiv := item.Find("div.rc")
-
-			linkHref, _ := rDiv.Find("a").Attr("href")
-			linkText := strings.TrimSpace(linkHref)
-			titleText := strings.TrimSpace(rDiv.Find("h3").Text())
-
-			descText := strings.TrimSpace(rDiv.Find("div > div > span > span").Text())
-
-			if linkText != "" && linkText != "#" {
-				result := Result{
-					Rank:        rank,
-					URL:         linkText,
-					Title:       titleText,
-					Description: descText,
-				}
-				results = append(results, result)
-				rank += 1
-			}
+			results = append(results, result)
+			rank += 1
 		}
 	})
 
