@@ -305,7 +305,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 		linkHref, _ := sel.Find("a").Attr("href")
 		linkText := strings.TrimSpace(linkHref)
-		titleText := strings.TrimSpace(sel.Find("div > div > a > h3 > span").Text())
+		titleText := strings.TrimSpace(sel.Find("div > div > a > h3").Text())
 
 		descText := strings.TrimSpace(sel.Find("div > div > div > span > span").Text())
 
