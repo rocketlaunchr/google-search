@@ -1,4 +1,8 @@
 <p align="right">
+  ⭐ &nbsp;&nbsp;<strong>the project to show your appreciation.</strong> :arrow_upper_right:
+</p>
+
+<p align="right">
   <a href="http://godoc.org/github.com/rocketlaunchr/google-search"><img src="http://godoc.org/github.com/rocketlaunchr/google-search?status.svg" /></a>
   <a href="https://goreportcard.com/report/github.com/rocketlaunchr/google-search"><img src="https://goreportcard.com/badge/github.com/rocketlaunchr/google-search" /></a>
 </p>
@@ -8,8 +12,6 @@
 </p>
 
 Quickly scrape Google Search Results.
-
-⭐ **the project to show your appreciation.**
 
 ## Example
 
