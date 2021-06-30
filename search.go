@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly/v2/proxy"
 )
 
 // Result represents a single result from Google Search.
@@ -254,6 +255,9 @@ type SearchOptions struct {
 	// OverLimit searches for more results than that specified by Limit.
 	// It then reduces the returned results to match Limit.
 	OverLimit bool
+
+	// set up proxy address to avoid ip blocking
+	ProxyAddr string
 }
 
 // Search returns a list of search results from Google.
@@ -329,6 +333,15 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	}
 
 	url := url(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
+
+	if opts[0].ProxyAddr != "" {
+		rp, err := proxy.RoundRobinProxySwitcher(opts[0].ProxyAddr)
+		if err != nil {
+			return nil, err
+		}
+		c.SetProxyFunc(rp)
+	}
+
 	c.Visit(url)
 
 	if rErr != nil {
