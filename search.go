@@ -256,7 +256,7 @@ type SearchOptions struct {
 	// It then reduces the returned results to match Limit.
 	OverLimit bool
 
-	// set up proxy address to avoid ip blocking
+	// ProxyAddr sets a proxy address to avoid IP blocking.
 	ProxyAddr string
 }
 
