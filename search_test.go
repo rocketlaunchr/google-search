@@ -16,8 +16,7 @@ func TestSearch(t *testing.T) {
 	q := "Hello World"
 
 	opts := googlesearch.SearchOptions{
-		Limit:     20,
-		ProxyAddr: "socks://127.0.0.1:7890",
+		Limit: 20,
 	}
 
 	returnLinks, err := googlesearch.Search(ctx, q, opts)
