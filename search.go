@@ -30,6 +30,8 @@ type Result struct {
 	Description string `json:"description"`
 }
 
+var Topics []string
+
 const stdGoogleBase = "https://www.google."
 const defaultAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
 
@@ -271,12 +273,19 @@ type SearchOptions struct {
 
 // Search returns a list of search results from Google.
 func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, error) {
+
+	resaults, _, err := search(ctx, searchTerm)
+	return resaults, err
+}
+
+// Search returns a list of search results from Google.
+func search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, []string, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
 	if err := RateLimit.Wait(ctx); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	c := colly.NewCollector(colly.MaxDepth(1))
@@ -372,12 +381,59 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		}
 	})
 
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(1) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(3) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(4) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(1) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(2) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(3) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(4) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		//fmt.Printf("Suchebegriff: %q \n", h.Text)
+		Topics = append(Topics, h.Text)
+	})
+
+	// limit := opts[0].Limit
+	// if opts[0].OverLimit {
+	// 	limit = int(float64(opts[0].Limit) * 1.5)
+	// }
+
+	// url := url(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
+
 	url := buildUrl(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 
 	if opts[0].ProxyAddr != "" {
 		rp, err := proxy.RoundRobinProxySwitcher(opts[0].ProxyAddr)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		c.SetProxyFunc(rp)
 	}
@@ -387,17 +443,17 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 	if rErr != nil {
 		if strings.Contains(rErr.Error(), "Too Many Requests") {
-			return nil, ErrBlocked
+			return nil, nil, ErrBlocked
 		}
-		return nil, rErr
+		return nil, nil, rErr
 	}
 
 	// Reduce results to max limit
 	if opts[0].Limit != 0 && len(results) > opts[0].Limit {
-		return results[:opts[0].Limit], nil
+		return results[:opts[0].Limit], Topics, nil
 	}
 
-	return results, nil
+	return results, Topics, nil
 }
 
 func getStart(uri string) int {
