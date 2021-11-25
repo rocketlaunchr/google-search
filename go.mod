@@ -2,6 +2,8 @@ module github.com/rocketlaunchr/google-search
 
 go 1.20
 
+replace github.com/rocketlaunchr/google-search => github.com/dirkh24/google-search
+
 require (
 	github.com/gocolly/colly/v2 v2.1.0
 	golang.org/x/time v0.3.0
