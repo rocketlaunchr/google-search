@@ -1,4 +1,4 @@
-// Copyright 2020-21 PJ Engineering and Business Solutions Pty. Ltd. All rights reserved.
+// Copyright 2020-22 PJ Engineering and Business Solutions Pty. Ltd. All rights reserved.
 
 package googlesearch
 
