@@ -1,4 +1,4 @@
-name: Audit
+name: GoogleDOMCheck
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [master]
   schedule:
-    - cron: '55 * * * *'
+    - cron: '0 0,12 * * *'
 
 
 jobs:
