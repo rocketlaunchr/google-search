@@ -8,23 +8,21 @@ on:
   schedule:
     - cron: '55 * * * *'
 
+
 jobs:
 
-  audit:
-    runs-on: ubuntu-20.04
+  build:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v3
       with:
-        go-version: 1.12
-
-    - name: Verify dependencies
-      run: go mod verify
+        go-version: 1.18
 
     - name: Build
       run: go build -v ./...
 
-    - name: Run tests
-      run: go test -race -vet=off ./...
+    - name: Test
+      run: go test -v ./...
