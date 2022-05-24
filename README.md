@@ -5,6 +5,7 @@
 <p align="right">
   <a href="http://godoc.org/github.com/rocketlaunchr/google-search"><img src="http://godoc.org/github.com/rocketlaunchr/google-search?status.svg" /></a>
   <a href="https://goreportcard.com/report/github.com/rocketlaunchr/google-search"><img src="https://goreportcard.com/badge/github.com/rocketlaunchr/google-search" /></a>
+  <a href="https://github.com/rocketlaunchr/google-search/actions"><img src="https://github.com/rocketlaunchr/google-search/actions/workflows/audit.yml/badge.svg" /></a>
 </p>
 
 <p align="center">
@@ -16,12 +17,8 @@ Quickly scrape Google Search Results.
 ## Example
 
 ```go
-package main
-
-import (
-	"fmt"
-	"github.com/rocketlaunchr/google-search"
-)
+import "fmt"
+import "github.com/rocketlaunchr/google-search"
 
 func main() {
 	fmt.Println(googlesearch.Search(nil, "cars for sale in Toronto, Canada"))
@@ -100,7 +97,7 @@ Special thanks to [Edmund Martin](https://edmundmartin.com/scraping-google-with-
 Other useful packages
 ------------
 
-- [awesome-svelte](https://github.com/rocketlaunchr/awesome-svelte) - Resources for killing react
+- [awesome-svelte](https://github.com/rocketlaunchr/awesome-svelte) - Resources for killing react.js
 - [dataframe-go](https://github.com/rocketlaunchr/dataframe-go) - Statistics and data manipulation
 - [dbq](https://github.com/rocketlaunchr/dbq) - Zero boilerplate database operations for Go
 - [electron-alert](https://github.com/rocketlaunchr/electron-alert) - SweetAlert2 for Electron Applications
@@ -108,4 +105,5 @@ Other useful packages
 - [mysql-go](https://github.com/rocketlaunchr/mysql-go) - Properly cancel slow MySQL queries
 - [react](https://github.com/rocketlaunchr/react) - Build front end applications using Go
 - [remember-go](https://github.com/rocketlaunchr/remember-go) - Cache slow database queries
+- [showerglass](https://github.com/rocketlaunchr/showerglass) - A soothing face filter for privacy
 - [testing-go](https://github.com/rocketlaunchr/testing-go) - Testing framework for unit testing
