@@ -1,4 +1,4 @@
-module github.com/lookatitude/google-search
+module github.com/rocketlaunchr/google-search
 
 go 1.20
 
