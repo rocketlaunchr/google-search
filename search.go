@@ -5,14 +5,13 @@ package googlesearch
 import (
 	"context"
 	"fmt"
-	"strings"
+	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/gocolly/colly/v2"
 	"github.com/gocolly/colly/v2/proxy"
 	"github.com/gocolly/colly/v2/queue"
-
-	"net/url"
 )
 
 // Result represents a single result from Google Search.
@@ -265,8 +264,8 @@ type SearchOptions struct {
 	// ProxyAddr sets a proxy address to avoid IP blocking.
 	ProxyAddr string
 
-	// follow links
-	FollowLinks bool 
+	// FollowNextPage, when set, scrapes subsequent result pages.
+	FollowNextPage bool
 }
 
 // Search returns a list of search results from Google.
@@ -297,10 +296,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		lc = opts[0].LanguageCode
 	}
 
-	q, _ := queue.New(
-		2,
-		&queue.InMemoryQueueStorage{MaxSize: 10000},
-	)
+	q, _ := queue.New(1, &queue.InMemoryQueueStorage{MaxSize: 10000})
 
 	limit := opts[0].Limit
 	if opts[0].OverLimit {
@@ -310,6 +306,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	results := []Result{}
 	nextPageLink := ""
 	var rErr error
+	filteredRank := 1
 	rank := 1
 
 	c.OnRequest(func(r *colly.Request) {
@@ -318,7 +315,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 			rErr = err
 			return
 		}
-		if opts[0].FollowLinks == true && nextPageLink != "" {
+		if opts[0].FollowNextPage && nextPageLink != "" {
 			req, err := r.New("GET", nextPageLink, nil)
 			if err == nil {
 				q.AddRequest(req)
@@ -340,15 +337,16 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		titleText := strings.TrimSpace(sel.Find("div > div > div > a > h3").Text())
 		descText := strings.TrimSpace(sel.Find("div > div > div > div:first-child > span:first-child").Text())
 
+		rank += 1
 		if linkText != "" && linkText != "#" && titleText != "" {
 			result := Result{
-				Rank:        rank,
+				Rank:        filteredRank,
 				URL:         linkText,
 				Title:       titleText,
 				Description: descText,
 			}
 			results = append(results, result)
-			rank += 1
+			filteredRank += 1
 		}
 
 		// check if there is a next button at the end.
@@ -364,8 +362,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 		// check if there is a next button at the end.
 		// Added this selector as the Id is the same for every language checked on google.com .pt and .es the text changes but the id remains the same
-		nextPageHref, exists := sel.Attr("href")
-		if exists == true {
+		if nextPageHref, exists := sel.Attr("href"); exists {
 			start := getStart(strings.TrimSpace(nextPageHref))
 			nextPageLink = buildUrl(searchTerm, opts[0].CountryCode, lc, limit, start)
 			q.AddURL(nextPageLink)
@@ -373,7 +370,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 			nextPageLink = ""
 		}
 	})
-	
+
 	url := buildUrl(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 
 	if opts[0].ProxyAddr != "" {
@@ -398,7 +395,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	if opts[0].Limit != 0 && len(results) > opts[0].Limit {
 		return results[:opts[0].Limit], nil
 	}
-	
+
 	return results, nil
 }
 
