@@ -6,9 +6,13 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"strconv"
 
 	"github.com/gocolly/colly/v2"
 	"github.com/gocolly/colly/v2/proxy"
+	"github.com/gocolly/colly/v2/queue"
+
+	"net/url"
 )
 
 // Result represents a single result from Google Search.
@@ -260,6 +264,9 @@ type SearchOptions struct {
 
 	// ProxyAddr sets a proxy address to avoid IP blocking.
 	ProxyAddr string
+
+	// follow links
+	FollowLinks bool 
 }
 
 // Search returns a list of search results from Google.
@@ -290,7 +297,18 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		lc = opts[0].LanguageCode
 	}
 
+	q, _ := queue.New(
+		2,
+		&queue.InMemoryQueueStorage{MaxSize: 10000},
+	)
+
+	limit := opts[0].Limit
+	if opts[0].OverLimit {
+		limit = int(float64(opts[0].Limit) * 1.5)
+	}
+
 	results := []Result{}
+	nextPageLink := ""
 	var rErr error
 	rank := 1
 
@@ -299,6 +317,12 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 			r.Abort()
 			rErr = err
 			return
+		}
+		if opts[0].FollowLinks == true && nextPageLink != "" {
+			req, err := r.New("GET", nextPageLink, nil)
+			if err == nil {
+				q.AddRequest(req)
+			}
 		}
 	})
 
@@ -326,14 +350,31 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 			results = append(results, result)
 			rank += 1
 		}
+
+		// check if there is a next button at the end.
+		// Added this selector as the Id is the same for every language checked on google.com .pt and .es the text changes but the id remains the same
+		nextPageHref, _ := sel.Find("a #pnnext").Attr("href")
+		nextPageLink = strings.TrimSpace(nextPageHref)
+
 	})
 
-	limit := opts[0].Limit
-	if opts[0].OverLimit {
-		limit = int(float64(opts[0].Limit) * 1.5)
-	}
+	c.OnHTML("div.g", func(e *colly.HTMLElement) {
 
-	url := url(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
+		sel := e.DOM
+
+		// check if there is a next button at the end.
+		// Added this selector as the Id is the same for every language checked on google.com .pt and .es the text changes but the id remains the same
+		nextPageHref, exists := sel.Attr("href")
+		if exists == true {
+			start := getStart(strings.TrimSpace(nextPageHref))
+			nextPageLink = buildUrl(searchTerm, opts[0].CountryCode, lc, limit, start)
+			q.AddURL(nextPageLink)
+		} else {
+			nextPageLink = ""
+		}
+	})
+	
+	url := buildUrl(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 
 	if opts[0].ProxyAddr != "" {
 		rp, err := proxy.RoundRobinProxySwitcher(opts[0].ProxyAddr)
@@ -343,7 +384,8 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		c.SetProxyFunc(rp)
 	}
 
-	c.Visit(url)
+	q.AddURL(url)
+	q.Run(c)
 
 	if rErr != nil {
 		if strings.Contains(rErr.Error(), "Too Many Requests") {
@@ -356,8 +398,20 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	if opts[0].Limit != 0 && len(results) > opts[0].Limit {
 		return results[:opts[0].Limit], nil
 	}
-
+	
 	return results, nil
+}
+
+func getStart(uri string) int {
+	u, err := url.Parse(uri)
+	if err != nil {
+		fmt.Println(err)
+	}
+	q := u.Query()
+	ss := q.Get("start")
+	si, _ := strconv.Atoi(ss)
+	return si
+
 }
 
 func base(url string) string {
@@ -368,7 +422,7 @@ func base(url string) string {
 	}
 }
 
-func url(searchTerm string, countryCode string, languageCode string, limit int, start int) string {
+func buildUrl(searchTerm string, countryCode string, languageCode string, limit int, start int) string {
 	searchTerm = strings.Trim(searchTerm, " ")
 	searchTerm = strings.Replace(searchTerm, " ", "+", -1)
 	countryCode = strings.ToLower(countryCode)
