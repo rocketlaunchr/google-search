@@ -285,7 +285,6 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 	if opts[0].UserAgent == "" {
 		c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
-	} else {
 		c.UserAgent = opts[0].UserAgent
 	}
 

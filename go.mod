@@ -1,4 +1,4 @@
-module github.com/rocketlaunchr/google-search
+module github.com/chrisjoyce911/google-search
 
 go 1.20
 
