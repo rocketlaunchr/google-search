@@ -88,6 +88,15 @@ Also note, that if you call this function too quickly, Google detects that it is
 </svg>
 </details>
 
+## Using a Fork
+
+If you are wanting to use an active Fork you can replace it in your gomod.go by doing the following
+
+```bash
+go get github.com/chrisjoyce911/google-search
+go mod edit -replace github.com/rocketlaunchr/google-search=github.com/chrisjoyce911/google-search@master
+go mod tidy
+```
 
 ## Credits
 
