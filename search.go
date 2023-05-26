@@ -31,6 +31,7 @@ type Result struct {
 }
 
 const stdGoogleBase = "https://www.google."
+const defaultAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
 
 // GoogleDomains represents localized Google homepages. The 2 letter country code is based on ISO 3166-1 alpha-2.
 //
@@ -284,7 +285,8 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	}
 
 	if opts[0].UserAgent == "" {
-		c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+		c.UserAgent = defaultAgent
+	} else {
 		c.UserAgent = opts[0].UserAgent
 	}
 
