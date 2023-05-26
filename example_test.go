@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
+
+	"golang.org/x/time/rate"
 )
 
 func ExampleSearch() {
@@ -57,4 +60,38 @@ func ExampleUserAgent() {
 
 	// Output: Australia Wide First Aid (https://www.australiawidefirstaid.com.au/) found in the serp
 
+}
+
+/*
+Example of how to set a Rate Limit
+*/
+func ExampleRateLimit() {
+
+	ctx := context.Background()
+
+	RateLimit.SetLimit(rate.Every(5 * time.Second)) // Interval
+	RateLimit.SetBurst(1)                           // Requests per Interval
+
+	err := RateLimit.Wait(ctx)
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+
+	for i := 1; i < 4; i++ {
+		serp, err := Search(ctx, "Australia Wide First Aid")
+
+		if err != nil {
+			fmt.Print(err.Error())
+		}
+
+		if len(serp) > 0 {
+			fmt.Println("Resaults found")
+		}
+
+	}
+
+	// Output:
+	// Resaults found
+	// Resaults found
+	// Resaults found
 }
