@@ -50,6 +50,51 @@ func TestSearch(t *testing.T) {
 	}
 }
 
+func TestRelatedSearch(t *testing.T) {
+
+	q := "Hello World"
+
+	opts := SearchOptions{
+		Limit: 20,
+	}
+
+	returnLinks, related, err := RelatedSearch(ctx, q, opts)
+	if err != nil {
+		t.Errorf("something went wrong: %v", err)
+		return
+	}
+
+	if len(returnLinks) == 0 {
+		t.Errorf("no results returned: %v", returnLinks)
+	}
+
+	noURL := 0
+	noTitle := 0
+	noDesc := 0
+
+	for _, res := range returnLinks {
+		if res.URL == "" {
+			noURL++
+		}
+
+		if res.Title == "" {
+			noTitle++
+		}
+
+		if res.Description == "" {
+			noDesc++
+		}
+	}
+
+	if len(related) < 1 {
+		t.Errorf("google dom changed")
+	}
+
+	if noURL == len(returnLinks) || noTitle == len(returnLinks) || noDesc == len(returnLinks) {
+		t.Errorf("google dom changed")
+	}
+}
+
 func Test_base(t *testing.T) {
 	tests := []struct {
 		name string

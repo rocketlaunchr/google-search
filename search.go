@@ -278,8 +278,8 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	return resaults, err
 }
 
-// Search returns a list of search results from Google.
-func SearchRelated(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, []string, error) {
+// RelatedSearch returns a list of related searches from Google.
+func RelatedSearch(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, []string, error) {
 
 	resaults, related, err := search(ctx, searchTerm, opts...)
 	return resaults, related, err
@@ -389,51 +389,36 @@ func search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(1) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(3) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(4) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(1) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(2) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(3) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
 
 	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(4) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
-		//fmt.Printf("Suchebegriff: %q \n", h.Text)
 		Topics = append(Topics, h.Text)
 	})
-
-	// limit := opts[0].Limit
-	// if opts[0].OverLimit {
-	// 	limit = int(float64(opts[0].Limit) * 1.5)
-	// }
-
-	// url := url(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 
 	url := buildUrl(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 
