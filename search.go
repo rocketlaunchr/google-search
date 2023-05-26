@@ -274,8 +274,15 @@ type SearchOptions struct {
 // Search returns a list of search results from Google.
 func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, error) {
 
-	resaults, _, err := search(ctx, searchTerm)
+	resaults, _, err := search(ctx, searchTerm, opts...)
 	return resaults, err
+}
+
+// Search returns a list of search results from Google.
+func SearchRelated(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, []string, error) {
+
+	resaults, related, err := search(ctx, searchTerm, opts...)
+	return resaults, related, err
 }
 
 // Search returns a list of search results from Google.

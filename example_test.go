@@ -93,3 +93,26 @@ func ExampleRateLimit() {
 	// Output:
 	// Resaults found
 }
+
+func ExampleSearchRelated() {
+
+	opt := SearchOptions{
+		CountryCode: "au",
+	}
+
+	_, topics, err := SearchRelated(context.Background(), "Google", opt)
+
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+
+	for _, topic := range topics {
+		if strings.Contains(topic, "google") {
+			fmt.Println("Related search found")
+			break
+		}
+	}
+
+	// Output: Related search found
+
+}
