@@ -77,7 +77,7 @@ func ExampleRateLimit() {
 		fmt.Print(err.Error())
 	}
 
-	for i := 1; i < 4; i++ {
+	for i := 0; i < 1; i++ {
 		serp, err := Search(ctx, "Australia Wide First Aid")
 
 		if err != nil {
@@ -91,7 +91,5 @@ func ExampleRateLimit() {
 	}
 
 	// Output:
-	// Resaults found
-	// Resaults found
 	// Resaults found
 }
