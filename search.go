@@ -14,6 +14,12 @@ import (
 	"github.com/gocolly/colly/v2/queue"
 )
 
+type SERP struct {
+	r          *colly.Response
+	searchTerm string
+	result     SERPFeatures
+}
+
 // Result represents of a single result from organic section of Google Search.
 type Result struct {
 
@@ -303,10 +309,48 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	return serp.Result, err
 }
 
-// SERP returns data from different features found in the search results from Google.
-func SERP(ctx context.Context, searchTerm string, opts ...SearchOptions) (SERPFeatures, error) {
+// FullSERP returns data from different features found in the search results from Google.
+func FullSERP(ctx context.Context, searchTerm string, opts ...SearchOptions) (SERPFeatures, error) {
+
 	serp, err := search(ctx, searchTerm, opts...)
 	return serp, err
+}
+
+/*
+Example of alterante option that allows for only the data required to be returned
+
+example :
+
+mysearch := googlesearch.NewSerach(nil,"Hello World")
+myOrganic:= mysearch.GetOrganic()
+myLocalPack := mysearch.GetLocalPack()
+
+*/
+
+// NewSerach
+func NewSerach(ctx context.Context, searchTerm string, opts ...SearchOptions) *SERP {
+	s := SERP{
+		searchTerm: searchTerm,
+	}
+	s.getResponse()
+	return &s
+}
+
+// Get the DOM
+func (s *SERP) getResponse() {
+	s.r = &colly.Response{}
+}
+
+// GetOrganic
+func (s *SERP) GetOrganic() []Result {
+	// process Organic and return them
+	return s.result.Result
+}
+
+// GetLocalPack
+func (s *SERP) GetLocalPack() []LocalPack {
+	// process Loca lPack and return it
+	return s.result.LocalPack
 }
 
 // Search returns a list of search results from Google.
