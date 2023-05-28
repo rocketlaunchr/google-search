@@ -53,10 +53,10 @@ type LocalPack struct {
 }
 
 type SERPFeatures struct {
-	Result        []Result    // Organic Results
-	LocalPack     []LocalPack // Local Pack SERP feature (aka the Google map pack or snack pack) shows location-specific results related to a query.
-	Related       []string    // Related searches, also known as “people also search for,” “people search next,” and “refine this search,” are a series of suggested searches related to the original search query.
-	PeopleAlsoAsk []string    // People Also Ask (PAA) blocks appear when you ask a question on Google and offer related information and links to the websites that provide the content.
+	Result        []Result    `json:"organic"`       // Organic Results
+	LocalPack     []LocalPack `json:"localpack"`     // Local Pack SERP feature (aka the Google map pack or snack pack) shows location-specific results related to a query.
+	Related       []string    `json:"related"`       // Related searches, also known as “people also search for,” “people search next,” and “refine this search,” are a series of suggested searches related to the original search query.
+	PeopleAlsoAsk []string    `json:"peoplealsoask"` // People Also Ask (PAA) blocks appear when you ask a question on Google and offer related information and links to the websites that provide the content.
 }
 
 const stdGoogleBase = "https://www.google."
