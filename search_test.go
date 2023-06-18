@@ -3,13 +3,10 @@
 package googlesearch_test
 
 import (
-	"context"
 	"testing"
 
-	"github.com/rocketlaunchr/google-search"
+	googlesearch "github.com/rocketlaunchr/google-search"
 )
-
-var ctx = context.Background()
 
 func TestSearch(t *testing.T) {
 
@@ -19,7 +16,8 @@ func TestSearch(t *testing.T) {
 		Limit: 20,
 	}
 
-	returnLinks, err := googlesearch.Search(ctx, q, opts)
+	//lint:ignore SA1012 ignore this bare essentials by passing nil for context and removing context package (despite not being idiomatic go).
+	returnLinks, err := googlesearch.Search(nil, q, opts)
 	if err != nil {
 		t.Errorf("something went wrong: %v", err)
 		return
