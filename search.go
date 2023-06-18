@@ -14,7 +14,13 @@ import (
 	"github.com/gocolly/colly/v2/queue"
 )
 
-// Result represents a single result from Google Search.
+type SERP struct {
+	r          *colly.Response
+	searchTerm string
+	result     SERPFeatures
+}
+
+// Result represents of a single result from organic section of Google Search.
 type Result struct {
 
 	// Rank is the order number of the search result.
@@ -28,6 +34,35 @@ type Result struct {
 
 	// Description of the result.
 	Description string `json:"description"`
+}
+
+// LocakPack represents of a single result from local pack section of Google Search.
+// It is a SERP feature (aka the Google map pack or snack pack) shows location-specific results related to a query.
+// Local packs tend to show up for searches with commercial intent.
+// Sometiems is call the Map Pack
+type LocalPack struct {
+
+	// Rank is the order number of the search result.
+	Rank int `json:"rank"`
+
+	// Title of result.
+	Title string `json:"title"`
+
+	// URL of result.
+	URL string `json:"url"`
+
+	// Direction to location. (URL Path only)
+	Direction string `json:"direction"`
+
+	// If this listing was sponsored.
+	Sponsored bool `json:"sponsored"`
+}
+
+type SERPFeatures struct {
+	Result        []Result    `json:"organic"`       // Organic Results
+	LocalPack     []LocalPack `json:"localpack"`     // Local Pack SERP feature (aka the Google map pack or snack pack) shows location-specific results related to a query.
+	Related       []string    `json:"related"`       // Related searches, also known as “people also search for,” “people search next,” and “refine this search,” are a series of suggested searches related to the original search query.
+	PeopleAlsoAsk []string    `json:"peoplealsoask"` // People Also Ask (PAA) blocks appear when you ask a question on Google and offer related information and links to the websites that provide the content.
 }
 
 const stdGoogleBase = "https://www.google."
@@ -271,12 +306,65 @@ type SearchOptions struct {
 
 // Search returns a list of search results from Google.
 func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, error) {
+	serp, err := search(ctx, searchTerm, opts...)
+	return serp.Result, err
+}
+
+// FullSERP returns data from different features found in the search results from Google.
+func FullSERP(ctx context.Context, searchTerm string, opts ...SearchOptions) (SERPFeatures, error) {
+
+	serp, err := search(ctx, searchTerm, opts...)
+	return serp, err
+}
+
+/*
+Example of alterante option that allows for only the data required to be returned
+
+example :
+
+mysearch := googlesearch.NewSerach(nil,"Hello World")
+myOrganic:= mysearch.GetOrganic()
+myLocalPack := mysearch.GetLocalPack()
+
+*/
+
+// NewSerach
+func NewSerach(ctx context.Context, searchTerm string, opts ...SearchOptions) *SERP {
+	s := SERP{
+		searchTerm: searchTerm,
+	}
+	s.getResponse()
+	return &s
+}
+
+// Get the DOM
+func (s *SERP) getResponse() {
+	s.r = &colly.Response{}
+}
+
+// GetOrganic
+func (s *SERP) GetOrganic() []Result {
+	// process Organic and return them
+	return s.result.Result
+}
+
+// GetLocalPack
+func (s *SERP) GetLocalPack() []LocalPack {
+	// process Loca lPack and return it
+	return s.result.LocalPack
+}
+
+// Search returns a list of search results from Google.
+func search(ctx context.Context, searchTerm string, opts ...SearchOptions) (SERPFeatures, error) {
+
+	var serp SERPFeatures
+
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
 	if err := RateLimit.Wait(ctx); err != nil {
-		return nil, err
+		return serp, err
 	}
 
 	c := colly.NewCollector(colly.MaxDepth(1))
@@ -346,7 +434,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 				Title:       titleText,
 				Description: descText,
 			}
-			results = append(results, result)
+			serp.Result = append(serp.Result, result)
 			filteredRank += 1
 		}
 
@@ -377,7 +465,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 	if opts[0].ProxyAddr != "" {
 		rp, err := proxy.RoundRobinProxySwitcher(opts[0].ProxyAddr)
 		if err != nil {
-			return nil, err
+			return serp, err
 		}
 		c.SetProxyFunc(rp)
 	}
@@ -387,17 +475,17 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 	if rErr != nil {
 		if strings.Contains(rErr.Error(), "Too Many Requests") {
-			return nil, ErrBlocked
+			return serp, ErrBlocked
 		}
-		return nil, rErr
+		return serp, rErr
 	}
 
 	// Reduce results to max limit
 	if opts[0].Limit != 0 && len(results) > opts[0].Limit {
-		return results[:opts[0].Limit], nil
+		serp.Result = serp.Result[:opts[0].Limit]
 	}
 
-	return results, nil
+	return serp, nil
 }
 
 func getStart(uri string) int {
