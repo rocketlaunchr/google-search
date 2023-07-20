@@ -13,8 +13,10 @@ func TestSearch(t *testing.T) {
 	opts := SearchOptions{
 		Limit: 20,
 	}
+
 	//lint:ignore SA1012 ignore this bare essentials by passing nil for context and removing context package (despite not being idiomatic go).
 	returnLinks, err := Search(nil, q, opts)
+
 	if err != nil {
 		t.Errorf("something went wrong: %v", err)
 		return
