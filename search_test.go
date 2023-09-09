@@ -1,23 +1,23 @@
 // Copyright 2020-21 PJ Engineering and Business Solutions Pty. Ltd. All rights reserved.
 
-package googlesearch
+package googlesearch_test
 
 import (
-	"context"
 	"testing"
-)
 
-var ctx = context.Background()
+	googlesearch "github.com/rocketlaunchr/google-search"
+)
 
 func TestSearch(t *testing.T) {
 
 	q := "Hello World"
 
-	opts := SearchOptions{
+	opts := googlesearch.SearchOptions{
 		Limit: 20,
 	}
 
-	returnLinks, err := Search(ctx, q, opts)
+	//lint:ignore SA1012 ignore this bare essentials by passing nil for context and removing context package (despite not being idiomatic go).
+	returnLinks, err := googlesearch.Search(nil, q, opts)
 	if err != nil {
 		t.Errorf("something went wrong: %v", err)
 		return
