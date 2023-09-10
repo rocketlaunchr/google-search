@@ -30,8 +30,9 @@ type Result struct {
 	Description string `json:"description"`
 }
 
+var Topics []string
+
 const stdGoogleBase = "https://www.google."
-const defaultAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
 
 // GoogleDomains represents localized Google homepages. The 2 letter country code is based on ISO 3166-1 alpha-2.
 //
@@ -271,12 +272,25 @@ type SearchOptions struct {
 
 // Search returns a list of search results from Google.
 func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, error) {
+
+	resaults, _, err := search(ctx, searchTerm, opts...)
+	return resaults, err
+}
+
+// RelatedSearch returns a list of related searches from Google.
+func RelatedSearch(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, []string, error) {
+	resaults, related, err := search(ctx, searchTerm, opts...)
+	return resaults, related, err
+}
+
+// Search returns a list of search results from Google.
+func search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Result, []string, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
 	if err := RateLimit.Wait(ctx); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	c := colly.NewCollector(colly.MaxDepth(1))
@@ -335,7 +349,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 		linkHref, _ := sel.Find("a").Attr("href")
 		linkText := strings.TrimSpace(linkHref)
-		titleText := strings.TrimSpace(sel.Find("div > div > div > a > h3").Text())
+		titleText := strings.TrimSpace(sel.Find("div > div > div > div > span:first-child > a > h3").Text())
 		descText := strings.TrimSpace(sel.Find("div > div > div > div:first-child > span:first-child").Text())
 
 		rank += 1
@@ -372,12 +386,44 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 		}
 	})
 
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(1) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(3) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(1) > div:nth-child(4) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(1) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(2) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(3) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
+	c.OnHTML("div.AJLUJb:nth-child(2) > div:nth-child(4) > a:nth-child(1) > div:nth-child(2)", func(h *colly.HTMLElement) {
+		Topics = append(Topics, h.Text)
+	})
+
 	url := buildUrl(searchTerm, opts[0].CountryCode, lc, limit, opts[0].Start)
 
 	if opts[0].ProxyAddr != "" {
 		rp, err := proxy.RoundRobinProxySwitcher(opts[0].ProxyAddr)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		c.SetProxyFunc(rp)
 	}
@@ -387,17 +433,17 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 	if rErr != nil {
 		if strings.Contains(rErr.Error(), "Too Many Requests") {
-			return nil, ErrBlocked
+			return nil, nil, ErrBlocked
 		}
-		return nil, rErr
+		return nil, nil, rErr
 	}
 
 	// Reduce results to max limit
 	if opts[0].Limit != 0 && len(results) > opts[0].Limit {
-		return results[:opts[0].Limit], nil
+		return results[:opts[0].Limit], Topics, nil
 	}
 
-	return results, nil
+	return results, Topics, nil
 }
 
 func getStart(uri string) int {

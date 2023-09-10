@@ -14,7 +14,7 @@
 
 Quickly scrape Google Search Results.
 
-## Example
+## Example Search
 
 ```go
 import "fmt"
@@ -49,6 +49,27 @@ func main() {
  }
 }
 ```
+
+## Example RelatedSearch
+
+```go
+import "fmt"
+import "github.com/rocketlaunchr/google-search"
+
+func main() {
+
+	_, topics, _ := RelatedSearch(context.Background(), "Google", opt)
+  fmt.Printf("%#v\n", topics)
+  
+}
+```
+
+## Results:
+
+```go
+[]string{"www.google.com search", "google account", "google mail", "google play", "google map", "google sign in", "google chrome", "google lens"}
+```
+
 
 ## :warning: Warning
 
@@ -91,7 +112,9 @@ Also note, that if you call this function too quickly, Google detects that it is
 
 ## Credits
 
-Special thanks to [Edmund Martin](https://edmundmartin.com/scraping-google-with-golang/).
+[dirkh24](https://github.com/dirkh24/google-search) for related search.
+
+[Edmund Martin](https://edmundmartin.com/scraping-google-with-golang/).
 
 
 Other useful packages
