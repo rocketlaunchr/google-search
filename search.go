@@ -31,7 +31,7 @@ type Result struct {
 }
 
 const stdGoogleBase = "https://www.google."
-const defaultAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+const defaultAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
 
 // GoogleDomains represents localized Google homepages. The 2 letter country code is based on ISO 3166-1 alpha-2.
 //
@@ -335,7 +335,7 @@ func Search(ctx context.Context, searchTerm string, opts ...SearchOptions) ([]Re
 
 		linkHref, _ := sel.Find("a").Attr("href")
 		linkText := strings.TrimSpace(linkHref)
-		titleText := strings.TrimSpace(sel.Find("div > div > div > a > h3").Text())
+		titleText := strings.TrimSpace(sel.Find("div > div > div > div > span:first-child > a > h3").Text())
 		descText := strings.TrimSpace(sel.Find("div > div > div > div:first-child > span:first-child").Text())
 
 		rank += 1
